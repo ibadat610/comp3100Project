@@ -1,166 +1,156 @@
 import java.io.*;
 import java.net.*;
 
-
-
 public class MyClient {
-	public static void main(String[] args) throws Exception{
-	try{
-		Socket s=new Socket("localhost",50000);
-		DataOutputStream dout=new DataOutputStream(s.getOutputStream());
-		BufferedReader dis=new BufferedReader(new InputStreamReader(s.getInputStream()));
-		
-		String S_Message;
-		String C_Message = "HELO\n";
-		
-		dout.write(C_Message.getBytes());
+	public static void main(String[] args) throws Exception {
+
+		Socket s = new Socket("localhost", 50000);
+		DataOutputStream dout = new DataOutputStream(s.getOutputStream());
+		BufferedReader dis = new BufferedReader(new InputStreamReader(s.getInputStream()));
+
+		String S_reply;
+		String client = "HELO\n";
+		String data;
+		int count = 1;
+		int[] Array_Server;
+		int max = 0;
+		String lrrServer = "";
+		int allServers = 0;
+
+		dout.write(client.getBytes());
 		dout.flush();
 
-		S_Message = dis.readLine();
-		System.out.println("message= "+S_Message);
+		S_reply = dis.readLine();
+		System.out.println("message= " + S_reply);
 
 		String username = System.getProperty("user.name");
-		C_Message = "AUTH "+username+"\n";
-		dout.write(C_Message.getBytes());
+		client = "AUTH " + username + "\n";
+		dout.write(client.getBytes());
 		dout.flush();
 
-		S_Message = dis.readLine();
-		System.out.println("message= "+S_Message);
-		
-		C_Message = "REDY\n";
-		dout.write(C_Message.getBytes());
+		S_reply = dis.readLine();
+		System.out.println("message= " + S_reply);
+
+		client = "REDY\n";
+		dout.write(client.getBytes());
 		dout.flush();
-		
-		S_Message = dis.readLine();
-		System.out.println("message= "+S_Message);
-		
-		
-		String Server_Data;
-		int job_count = 1;
-		int[] Servers_Array;
-		int max_Cores = 0;
-		String Server_Name = "";
-		int Server_Count = 0;
-		
-		
 
-		C_Message = "GETS All\n";
-     		dout.write(C_Message.getBytes());		
-     		dout.flush();
+	
 
-     		S_Message = dis.readLine();
-     		System.out.println("message= "+S_Message);
-     		
-     		Server_Data = S_Message;
-     		System.out.println("Servers Data = " + Server_Data);
-     		int index1 = Server_Data.indexOf("DATA") + 5;
-     		int index2 = Server_Data.indexOf(' ',Server_Data.indexOf(' ') + 1);
-     		String nRecs = Server_Data.substring(index1, index2);
-     		System.out.println("Number of Servers = " + nRecs);
-     		int nRecs_Int = Integer.parseInt(nRecs);
-     		
-     	
-     		Servers_Array = new int[nRecs_Int];
-     			
-     		C_Message = "OK\n";
-     		dout.write(C_Message.getBytes());
-     		dout.flush();
+		S_reply = dis.readLine();
+		System.out.println("message= " + S_reply);
 
-			
-     			
-			
-     		String[] S_Array = new String[nRecs_Int];
-     		int i = 0;
-     		
-     		while (i < nRecs_Int) {
-     			S_Message = dis.readLine();
-     			S_Array[i] = S_Message;
-     			System.out.println("S_Array: " + S_Array[i]);
-     			i++;
-     		}
-     		
-     		int[] coreNum = new int[nRecs_Int];
-     		String[] cores;
-     		
-     		for (int k = 0; k < Servers_Array.length; k++) {
-     			cores = S_Array[k].split(" ");
-     			coreNum[k] = Integer.parseInt(cores[4]);
-     			
-     		}
-     		
-     		for (int j = 0; j < coreNum.length; j++) {
-     			if (coreNum[j] > coreNum[0]) {
-     				max_Cores = j;
-     				
-     			}
-     		}
-     		
-     		
-     		String[] temp = S_Array[max_Cores].split(" ");
-     		Server_Name = temp[0];
-     		
-     		for (int r = 0; r < S_Array.length; r++) {
-     			if (S_Array[r].contains(Server_Name)) {
-     				Server_Count++;
-     			}
-     		}
-     		
-     		int Server_id = 0;
-     		
-     		System.out.println(Server_Name);
-     		System.out.println(Server_Count);
-     		
-     		C_Message = "OK\n";
-     		dout.write(C_Message.getBytes());
-     		dout.flush();	
-     		
-     		S_Message = dis.readLine();
-     		System.out.println(S_Message);
-     		
-     		
-     		C_Message = "SCHD 0 " + Server_Name + " 0\n";
-     		dout.write(C_Message.getBytes());
-     		dout.flush();
-     		S_Message = dis.readLine();
-     		System.out.println(S_Message);
+			data = S_reply;
+		String sa =data;
 
-		while(!(S_Message.contains("NONE"))){
-  
-  			C_Message = "REDY\n";
-  			dout.write(C_Message.getBytes());
-  			dout.flush();
-  
-   			S_Message = dis.readLine();
-   			System.out.println("message= "+S_Message);
-			
-			
-  				if(S_Message.contains("JOBN")){    
-     					C_Message = "SCHD " + job_count + " " + Server_Name + " " + Server_id + "\n";
-     					dout.write(C_Message.getBytes());
-     					dout.flush();
-     					S_Message = dis.readLine();
-     					System.out.println(S_Message);
-     					job_count++;
-     					Server_id++;
-     					if (Server_id == Server_Count) {
-     						Server_id = 0;
-     					}
-    
-  				}
-  			
+		String[] ar =sa.split(" ");
+		for ( String ss: ar){
+			System.out.println(ss);
 		}
-		
-		C_Message = "QUIT\n";
-		dout.write(C_Message.getBytes());
+		String record = ar[4] + " " + ar[5] + " " +ar[6];
+
+
+		client = "GETS Capable "+ record + "\n";
+		dout.write(client.getBytes());
 		dout.flush();
+
+		S_reply = dis.readLine();
+		System.out.println("message= " + S_reply);
+
+		data = S_reply;
+		System.out.println("Servers = " + data);
+		int id1 = data.indexOf("DATA") + 5;
+		int id2 = data.indexOf(' ', data.indexOf(' ') + 1);
+		String records = data.substring(id1, id2);
+		System.out.println("nRec = " + records);
+		int dataInt = Integer.parseInt(records);
+		System.out.println("Int = " + dataInt);
+
+		Array_Server = new int[dataInt];
+
+		client = "OK\n";
+		dout.write(client.getBytes());
+		dout.flush();
+
+		String[] nRec = new String[dataInt];
+		int i = 0;
+		while (i < dataInt) {
+			S_reply = dis.readLine();
+			nRec[i] = S_reply;
+			System.out.println("nRec: " + nRec[i]);
+			i++;
+		}
+
+		int[] core = new int[dataInt];
+		String[] cores;
+
+		for (int k = 0; k < Array_Server.length; k++) {
+			cores = nRec[k].split(" ");
+			core[k] = Integer.parseInt(cores[4]);
+		}
+
+		for (int j = 0; j < core.length; j++) {
+			if (core[j] > core[0]) {
+				max = j;
+			}
+		}
+
+		String[] hold = nRec[max].split(" ");
+		lrrServer = hold[0];
+
+		for (int r = 0; r < nRec.length; r++) {
+			if (nRec[r].contains(lrrServer)) {
+				allServers++;
+			}
+		}
+
+		int ServerID = 0;
+
+		System.out.println(lrrServer);
+		System.out.println(allServers);
+
+		client = "OK\n";
+		dout.write(client.getBytes());
+		dout.flush();
+
+		S_reply = dis.readLine();
+		System.out.println(S_reply);
+
+		client = "SCHD 0 " + lrrServer + " 0\n";
+		dout.write(client.getBytes());
+		dout.flush();
+		S_reply = dis.readLine();
+		System.out.println(S_reply);
+
+		while (!(S_reply.contains("NONE"))) {
+			client = "REDY\n";
+			dout.write(client.getBytes());
+			dout.flush();
+
+			S_reply = dis.readLine();
+			System.out.println("message= " + S_reply);
+			if (S_reply.contains("JOBN")) {
+				client = "SCHD " + count + " " + lrrServer + " " + ServerID + "\n";
+				dout.write(client.getBytes());
+				dout.flush();
+				S_reply = dis.readLine();
+				System.out.println(S_reply);
+				count++;
+				ServerID++;
+				if (ServerID == allServers) {
+					ServerID = 0;
+				}
+			}
+		}
+		client = "QUIT\n";
+		dout.write(client.getBytes());
+		dout.flush();
+
+    S_reply = dis.readLine();
+		System.out.println("message= " + S_reply);
 		
-		S_Message = dis.readLine();
-   		System.out.println("message= "+S_Message);
-		
-		dout.close();
+    dout.close();
+
 		s.close();
-		
-		}
-		catch(Exception e){System.out.println(e);}
 	}
 }
